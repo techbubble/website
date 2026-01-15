@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trend Protocol: Statistical Precompile Specification</title>
+    <style>
+        :root {
+            --bg-color: #faf9f6; 
+            --text-color: #2c2c2c;
+            --accent-color: #003366; /* Vitruveo Blue */
+            --border-color: #dcdcdc;
+            --font-serif: "Georgia", "Times New Roman", serif;
+            --font-sans: "Helvetica Neue", "Arial", sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-serif);
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Navigation Bar */
+        .nav-bar {
+            background-color: #ffffff;
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 0;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            font-family: var(--font-sans);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: #666;
+            font-weight: 500;
+            margin: 0 1.5rem;
+            padding-bottom: 0.25rem;
+            transition: color 0.3s;
+        }
+
+        .nav-link:hover { color: var(--accent-color); }
+        .nav-link.active {
+            color: var(--text-color);
+            border-bottom: 2px solid var(--accent-color);
+        }
+
+        /* Main Container */
+        .paper-container {
+            max-width: 800px;
+            margin: 3rem auto;
+            padding: 2rem 4rem;
+            background-color: #ffffff;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            border: 1px solid #eee;
+        }
+
+        /* Unified Header Styles */
+        h1 {
+            font-family: var(--font-sans);
+            font-size: 2.2rem;
+            text-align: center;
+            margin-bottom: 0.5rem;
+            color: #111;
+        }
+
+        .subtitle {
+            text-align: center;
+            font-family: var(--font-sans);
+            color: #555;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            font-weight: 300;
+        }
+
+        .author-block {
+            text-align: center;
+            margin-bottom: 2.5rem;
+            font-family: var(--font-sans);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 1.5rem;
+        }
+
+        .author-name {
+            font-weight: bold;
+            font-size: 1.1rem;
+            color: #333;
+        }
+
+        .meta-data {
+            font-size: 0.9rem;
+            color: #777;
+            margin-top: 0.2rem;
+        }
+
+        /* Content Styles */
+        h2 { font-family: var(--font-sans); font-size: 1.4rem; margin-top: 2.5rem; border-bottom: 2px solid var(--border-color); padding-bottom: 0.5rem; color: #333; }
+        h3 { font-family: var(--font-sans); font-size: 1.1rem; margin-top: 1.5rem; color: #444; font-weight: 600; }
+        p { margin-bottom: 1.2rem; text-align: justify; }
+        ul, ol { margin-bottom: 1.2rem; padding-left: 2rem; }
+        li { margin-bottom: 0.5rem; }
+
+        table { width: 100%; border-collapse: collapse; margin: 2rem 0; font-size: 0.95rem; font-family: var(--font-sans); }
+        th, td { border: 1px solid var(--border-color); padding: 0.75rem; text-align: left; }
+        th { background-color: #f4f4f4; font-weight: 600; }
+        
+        pre {
+            background-color: #f8f8f8;
+            padding: 1rem;
+            border-left: 3px solid var(--accent-color);
+            overflow-x: auto;
+            font-family: "Courier New", monospace;
+            font-size: 0.9rem;
+        }
+
+        /* Footer */
+        footer {
+            margin-top: 80px;
+            padding-top: 40px;
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+            color: #666;
+            font-size: 0.9rem;
+            font-family: var(--font-sans);
+            padding-bottom: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .paper-container { padding: 1.5rem; margin: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="nav-bar">
+        <a href="index.html" class="nav-link">HOST Whitepaper</a>
+        <a href="trend.html" class="nav-link active">Trend Protocol Yellow Paper</a>
+    </nav>
+
+    <div class="paper-container">
+        <h1>Trend Protocol</h1>
+        <div class="subtitle">A Statistical Precompile for On-Chain Market Settlement</div>
+        
+        <div class="author-block">
+            <div class="author-name">Nik Kalyani</div>
+            <div class="meta-data">Version 1.0 | January 2026</div>
+        </div>
+
+        <h2>1. Abstract</h2>
+        <p>
+            The Trend Protocol introduces a native Precompiled Contract ("Precompile") to the Vitruveo EVM, designed specifically for high-throughput financial computation. It addresses the "Computational Gas Limit" inherent in Solidity when processing iterative statistical arrays. By offloading Ordinary Least Squares (OLS) regression and volatility distribution logic to the Go execution layer, the protocol enables $O(N)$ linear-time analysis of market data at negligible gas costs, enabling a new class of "Trend-Aware" DeFi applications.
+        </p>
+
+        <h2>2. The Computational Bottleneck in Solidity</h2>
+        <p>
+            Standard EVM architecture is optimized for state transitions, not statistical math. Implementing a simple Linear Regression over a dataset of 100+ points in Solidity presents three critical points of failure:
+        </p>
+        <ol>
+            <li><strong>Gas Cost:</strong> Iterating through arrays and performing fixed-point arithmetic consumes gas linearly. A dataset of sufficient resolution can easily breach the block gas limit, causing transaction reversion.</li>
+            <li><strong>Precision Loss:</strong> Solidity lacks native floating-point support. Emulating decimals via <code>uint256</code> fixed-point math introduces complexity and potential rounding errors in division-heavy formulas like Variance or $R^2$.</li>
+            <li><strong>Storage Expansion:</strong> Reading large historical arrays from storage (SLOAD) is prohibitively expensive for high-frequency settlement.</li>
+        </ol>
+
+        <h2>3. The Solution: Native Go Execution</h2>
+        <p>
+            The Trend Protocol bypasses the EVM bytecode interpreter entirely. It registers a custom Precompile at address <code>0x00...DC</code>. When a smart contract calls this address, execution handovers to the underlying Go (Geth) client.
+        </p>
+        
+        <h3>3.1 Performance Architecture</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Feature</th>
+                    <th>Solidity Implementation</th>
+                    <th>Trend Precompile (Go)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Execution</strong></td>
+                    <td>Interpreted Bytecode</td>
+                    <td>Compiled Machine Code</td>
+                </tr>
+                <tr>
+                    <td><strong>Math Type</strong></td>
+                    <td>Emulated Fixed-Point</td>
+                    <td>Native <code>big.Int</code> / <code>float64</code></td>
+                </tr>
+                <tr>
+                    <td><strong>Complexity</strong></td>
+                    <td>$O(N)$ (High Gas)</td>
+                    <td>$O(N)$ (Near-Zero Latency)</td>
+                </tr>
+                <tr>
+                    <td><strong>Safety</strong></td>
+                    <td>Risk of Gas Limit Revert</td>
+                    <td>Atomic Execution</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>4. Precompile Specification</h2>
+        <p>
+            The precompile accepts a packed byte array containing time-series data and an operation mode byte. It supports two primary computational modes:
+        </p>
+
+        <h3>4.1 Mode 0x01: Settlement Engine (OLS)</h3>
+        <p>
+            This mode calculates the "Best Fit Line" through a noisy dataset to determine the true market trend, filtering out flash crashes and scam wicks.
+        </p>
+        <pre>
+Input:  [Mode (1b)] + [Timestamp (8b) + Value (32b)]...
+Output: [Slope (int256)] [Confidence_R2 (uint256)] [Volatility (uint256)]</pre>
+        <p>
+            The Go implementation utilizes <code>big.Int</code> for infinite precision during summation, only reducing to fixed-point for the final output. This allows for the calculation of <strong>Confidence ($R^2$)</strong> and <strong>Standard Deviation</strong> in a single pass—metrics that are computationally infeasible in standard Solidity.
+        </p>
+
+        <h3>4.2 Mode 0x02: Volatility Architect (Buckets)</h3>
+        <p>
+            This mode ingests historical data to construct a probability distribution of market volatility. It computes the "velocity" (absolute % change) between points, sorts them, and slices the distribution into quintiles (20th, 40th, 60th, 80th percentiles).
+        </p>
+        <p>
+            <strong>Why Go?</strong> Sorting an array is an $O(N \log N)$ operation. In Solidity, sorting a large array is practically impossible due to gas costs. In Go, the `sort` package handles this in microseconds.
+        </p>
+
+        <h2>5. Robustness & Safety</h2>
+        <p>
+            The precompile acts as a "Gatekeeper" for data integrity. It enforces strict mathematical rules before returning a result:
+        </p>
+        <ul>
+            <li><strong>Last-Write-Wins Deduplication:</strong> Automatically handles "Time Warp" attacks (duplicate timestamps) by overwriting previous values in the buffer, preventing Division-by-Zero panics.</li>
+            <li><strong>Two's Complement Handling:</strong> Natively handles negative slopes (Bear Markets) using standard signed integer logic, which is often a source of overflow bugs in Solidity libraries.</li>
+            <li><strong>Insufficient Data Rejection:</strong> Requires a minimum density of data points to calculate a valid regression, ensuring that low-resolution data cannot settle a high-value market.</li>
+        </ul>
+
+        <h2>6. Conclusion</h2>
+        <p>
+            The Trend Protocol demonstrates the power of Layer 1 customization. By embedding complex financial primitives directly into the client software, Vitruveo allows smart contracts to access "Supercomputer" capabilities—performing heavy statistical analysis that would otherwise require off-chain trust assumptions. This creates a standard for Truth, derived not from opinion, but from deterministic calculation.
+        </p>
+
+        <footer>
+            Copyright © 2026 Nik Kalyani
+        </footer>
+
+    </div>
+
+</body>
+</html>

@@ -4,339 +4,204 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HOST: HTTP Outbound Service Trigger | Nik Kalyani</title>
-    <meta name="description" content="HOST transforms blockchain architecture with a push-based trigger mechanism. Smart contracts actively invoke external services as a native side-effect of transaction execution.">
     <meta name="author" content="Nik Kalyani">
-    <meta property="og:title" content="HOST: HTTP Outbound Service Trigger">
-    <meta property="og:description" content="The Protocol-Level Standard for Active On-Chain Intelligence. Powered by Vitruveo L1.">
-    <meta property="og:type" content="article">
-    <meta property="og:url" content="https://www.kalyani.net">
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:creator" content="@techbubble">
-    <meta name="twitter:title" content="HOST: HTTP Outbound Service Trigger">
-    <meta name="twitter:description" content="The Protocol-Level Standard for Active On-Chain Intelligence. Powered by Vitruveo L1.">
     <style>
         :root {
-            --bg: #0a0a0a;
-            --surface: #141414;
-            --border: #2a2a2a;
-            --text: #e0e0e0;
-            --text-muted: #888;
-            --accent: #6366f1;
-            --accent-dim: #4f46e5;
+            --bg-color: #faf9f6; 
+            --text-color: #2c2c2c;
+            --accent-color: #003366; /* Vitruveo Blue */
+            --border-color: #dcdcdc;
+            --font-serif: "Georgia", "Times New Roman", serif;
+            --font-sans: "Helvetica Neue", "Arial", sans-serif;
         }
-        
-        * {
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-serif);
+            line-height: 1.6;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
         }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            line-height: 1.7;
-            font-size: 17px;
-        }
-        
-        .container {
-            max-width: 720px;
-            margin: 0 auto;
-            padding: 60px 24px 120px;
-        }
-        
-        header {
+
+        /* Navigation Bar */
+        .nav-bar {
+            background-color: #ffffff;
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 0;
             text-align: center;
-            margin-bottom: 80px;
-            padding-bottom: 60px;
-            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            font-family: var(--font-sans);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
         }
-        
-        .badge {
-            display: inline-block;
-            font-size: 12px;
-            font-weight: 600;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            color: var(--accent);
-            margin-bottom: 24px;
-        }
-        
-        h1 {
-            font-size: 42px;
-            font-weight: 700;
-            letter-spacing: -0.02em;
-            margin-bottom: 16px;
-            line-height: 1.1;
-        }
-        
-        .subtitle {
-            font-size: 20px;
-            color: var(--text-muted);
-            margin-bottom: 8px;
-        }
-        
-        .powered {
-            font-size: 14px;
-            color: var(--text-muted);
-            margin-bottom: 32px;
-        }
-        
-        .meta {
-            font-size: 14px;
-            color: var(--text-muted);
-        }
-        
-        .meta a {
-            color: var(--accent);
+
+        .nav-link {
             text-decoration: none;
+            color: #666;
+            font-weight: 500;
+            margin: 0 1.5rem;
+            padding-bottom: 0.25rem;
+            transition: color 0.3s;
         }
-        
-        .meta a:hover {
-            text-decoration: underline;
+
+        .nav-link:hover { color: var(--accent-color); }
+        .nav-link.active {
+            color: var(--text-color);
+            border-bottom: 2px solid var(--accent-color);
         }
-        
-        h2 {
-            font-size: 28px;
-            font-weight: 600;
-            margin-top: 64px;
-            margin-bottom: 24px;
-            letter-spacing: -0.01em;
+
+        /* Main Container */
+        .paper-container {
+            max-width: 800px;
+            margin: 3rem auto;
+            padding: 2rem 4rem;
+            background-color: #ffffff;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            border: 1px solid #eee;
         }
-        
-        h3 {
-            font-size: 20px;
-            font-weight: 600;
-            margin-top: 40px;
-            margin-bottom: 16px;
+
+        /* Unified Header Styles */
+        h1 {
+            font-family: var(--font-sans);
+            font-size: 2.2rem;
+            text-align: center;
+            margin-bottom: 0.5rem;
+            color: #111;
         }
-        
-        p {
-            margin-bottom: 20px;
-            color: var(--text);
+
+        .subtitle {
+            text-align: center;
+            font-family: var(--font-sans);
+            color: #555;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            font-weight: 300;
         }
-        
-        strong {
-            color: #fff;
-            font-weight: 600;
+
+        .author-block {
+            text-align: center;
+            margin-bottom: 2.5rem;
+            font-family: var(--font-sans);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 1.5rem;
         }
-        
+
+        .author-name {
+            font-weight: bold;
+            font-size: 1.1rem;
+            color: #333;
+        }
+
+        .meta-data {
+            font-size: 0.9rem;
+            color: #777;
+            margin-top: 0.2rem;
+        }
+
+        /* Content Styles */
+        h2 { font-family: var(--font-sans); font-size: 1.4rem; margin-top: 2.5rem; border-bottom: 2px solid var(--border-color); padding-bottom: 0.5rem; color: #333; }
+        h3 { font-family: var(--font-sans); font-size: 1.1rem; margin-top: 1.5rem; color: #444; font-weight: 600; }
+        p { margin-bottom: 1.2rem; text-align: justify; }
+        ul, ol { margin-bottom: 1.2rem; padding-left: 2rem; }
+        li { margin-bottom: 0.5rem; }
+
         .highlight {
-            background: var(--surface);
-            border-left: 3px solid var(--accent);
+            background: #f8f8f8;
+            border-left: 3px solid var(--accent-color);
             padding: 20px 24px;
             margin: 32px 0;
-            border-radius: 0 8px 8px 0;
+            font-style: italic;
         }
-        
-        .highlight p {
-            margin-bottom: 0;
-        }
-        
-        .comparison-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 32px 0;
-            font-size: 15px;
-        }
-        
-        .comparison-table th,
-        .comparison-table td {
-            padding: 14px 20px;
-            text-align: left;
-            border-bottom: 1px solid var(--border);
-        }
-        
-        .comparison-table th {
-            background: var(--surface);
-            font-weight: 600;
-            color: #fff;
-        }
-        
-        .comparison-table td:first-child {
-            color: var(--text-muted);
-        }
-        
-        .comparison-table td:last-child {
-            color: var(--accent);
-        }
-        
-        .use-cases {
-            margin: 32px 0;
-        }
-        
-        .use-case-category {
-            margin-bottom: 40px;
-        }
-        
+
+        table { width: 100%; border-collapse: collapse; margin: 2rem 0; font-size: 0.95rem; font-family: var(--font-sans); }
+        th, td { border: 1px solid var(--border-color); padding: 0.75rem; text-align: left; }
+        th { background-color: #f4f4f4; font-weight: 600; }
+
         .use-case-category h4 {
-            font-size: 16px;
+            font-family: var(--font-sans);
+            font-size: 1rem;
             font-weight: 600;
-            color: var(--accent);
-            margin-bottom: 16px;
+            color: var(--accent-color);
+            margin-bottom: 10px;
             text-transform: uppercase;
             letter-spacing: 0.05em;
+            margin-top: 32px;
         }
-        
-        .use-case-list {
-            list-style: none;
-        }
-        
-        .use-case-list li {
-            padding: 12px 0;
-            border-bottom: 1px solid var(--border);
-            color: var(--text-muted);
-        }
-        
-        .use-case-list li:last-child {
-            border-bottom: none;
-        }
-        
-        .use-case-list strong {
-            color: var(--text);
-        }
-        
+
         .scenario {
-            background: var(--surface);
-            border-radius: 12px;
+            background: #f9f9f9;
+            border: 1px solid #eee;
+            border-radius: 4px;
             padding: 32px;
             margin: 32px 0;
         }
-        
-        .scenario-title {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 20px;
-            color: #fff;
-        }
-        
-        .scenario-steps {
-            list-style: none;
-            counter-reset: steps;
-        }
-        
-        .scenario-steps li {
-            counter-increment: steps;
-            padding: 12px 0 12px 48px;
-            position: relative;
-            border-bottom: 1px solid var(--border);
-        }
-        
-        .scenario-steps li:last-child {
-            border-bottom: none;
-        }
-        
-        .scenario-steps li::before {
-            content: counter(steps);
-            position: absolute;
-            left: 0;
-            top: 12px;
-            width: 28px;
-            height: 28px;
-            background: var(--accent-dim);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 13px;
-            font-weight: 600;
-            color: #fff;
-        }
-        
-        .result {
-            margin-top: 24px;
-            padding-top: 20px;
-            border-top: 1px solid var(--border);
-            font-style: italic;
-            color: var(--text-muted);
-        }
-        
+
+        .scenario-title { font-family: var(--font-sans); font-size: 1.1rem; font-weight: 600; margin-bottom: 20px; }
+
+        /* Footer */
         footer {
             margin-top: 80px;
             padding-top: 40px;
-            border-top: 1px solid var(--border);
+            border-top: 1px solid var(--border-color);
             text-align: center;
-            color: var(--text-muted);
-            font-size: 14px;
+            color: #666;
+            font-size: 0.9rem;
+            font-family: var(--font-sans);
+            padding-bottom: 1rem;
         }
-        
-        footer a {
-            color: var(--accent);
-            text-decoration: none;
-        }
-        
-        footer a:hover {
-            text-decoration: underline;
-        }
-        
-        .contact {
-            margin-top: 16px;
-        }
-        
-        .contact a {
-            margin: 0 12px;
-        }
-        
-        @media (max-width: 600px) {
-            .container {
-                padding: 40px 20px 80px;
-            }
-            
-            h1 {
-                font-size: 32px;
-            }
-            
-            h2 {
-                font-size: 24px;
-            }
-            
-            .comparison-table th,
-            .comparison-table td {
-                padding: 12px 14px;
-            }
+
+        @media (max-width: 768px) {
+            .paper-container { padding: 1.5rem; margin: 1rem; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <div class="badge">Whitepaper</div>
-            <h1>HOST</h1>
-            <p class="subtitle">HTTP Outbound Service Trigger</p>
-            <p class="powered">The Protocol-Level Standard for Active On-Chain Intelligence<br>Powered by Vitruveo L1</p>
-            <p class="meta">Version 2.0 · January 2026 · <a href="https://x.com/techbubble" target="_blank">Nik Kalyani</a></p>
-        </header>
+
+    <nav class="nav-bar">
+        <a href="index.html" class="nav-link active">HOST Whitepaper</a>
+        <a href="trend.html" class="nav-link">Trend Protocol Yellow Paper</a>
+    </nav>
+
+    <div class="paper-container">
         
-        <section>
-            <h2>1. Executive Summary</h2>
-            <p>Smart contracts are historically isolated environments—efficient at calculation but passive in nature. They typically rely on "pull" architectures where external agents (Oracles, Keepers) must constantly monitor the chain for events, introducing latency, redundancy costs, and infrastructure complexity.</p>
-            <p>HOST (HTTP Outbound Service Trigger) transforms this paradigm by introducing a "push" architecture directly at the protocol level of the Vitruveo Blockchain. By leveraging Vitruveo's high-performance Layer 1 EVM architecture, HOST empowers smart contracts to actively trigger external services and webhooks as a native side-effect of transaction execution.</p>
-            <p>With Vitruveo's 5-second block time and negligible gas fees, HOST enables near-real-time, high-frequency agentic workflows that would be economically impossible on legacy chains.</p>
-        </section>
+        <h1>HOST Protocol</h1>
+        <div class="subtitle">HTTP Outbound Service Trigger</div>
         
-        <section>
-            <h2>2. The Vitruveo Advantage</h2>
-            <p>HOST is not just a theoretical protocol; it is deeply integrated into the Vitruveo L1 consensus layer. This integration provides specific advantages:</p>
-            <p><strong>Speed (5-Second Latency):</strong> Unlike Ethereum Mainnet (12s) or Bitcoin (10m), Vitruveo seals blocks every 5 seconds. This means an AI agent can be triggered, perform a task, and report back in under 15 seconds—true interactive speed.</p>
-            <p><strong>Cost Efficiency:</strong> AI workflows often require multi-step verification. Vitruveo's low-gas environment allows developers to build complex, "chatty" protocols where contracts and agents exchange data frequently without draining user funds.</p>
-            <p><strong>Dynamic Generation:</strong> Vitruveo uses HOST to power the next generation of generative tokens, where assets are not just stored but generated on demand by AI.</p>
-        </section>
+        <div class="author-block">
+            <div class="author-name">Nik Kalyani</div>
+            <div class="meta-data">Version 2.0 | January 2026</div>
+        </div>
+
+        <h2>1. Executive Summary</h2>
+        <p>Smart contracts are historically isolated environments—efficient at calculation but passive in nature. They typically rely on "pull" architectures where external agents (Oracles, Keepers) must constantly monitor the chain for events, introducing latency, redundancy costs, and infrastructure complexity.</p>
+        <p>HOST (HTTP Outbound Service Trigger) transforms this paradigm by introducing a "push" architecture directly at the protocol level of the Vitruveo Blockchain. By leveraging Vitruveo's high-performance Layer 1 EVM architecture, HOST empowers smart contracts to actively trigger external services and webhooks as a native side-effect of transaction execution.</p>
+        <p>With Vitruveo's 5-second block time and negligible gas fees, HOST enables near-real-time, high-frequency agentic workflows that would be economically impossible on legacy chains.</p>
+
+        <h2>2. The Vitruveo Advantage</h2>
+        <p>HOST is not just a theoretical protocol; it is deeply integrated into the Vitruveo L1 consensus layer. This integration provides specific advantages:</p>
+        <p><strong>Speed (5-Second Latency):</strong> Unlike Ethereum Mainnet (12s) or Bitcoin (10m), Vitruveo seals blocks every 5 seconds. This means an AI agent can be triggered, perform a task, and report back in under 15 seconds—true interactive speed.</p>
+        <p><strong>Cost Efficiency:</strong> AI workflows often require multi-step verification. Vitruveo's low-gas environment allows developers to build complex, "chatty" protocols where contracts and agents exchange data frequently without draining user funds.</p>
+        <p><strong>Dynamic Generation:</strong> Vitruveo uses HOST to power the next generation of generative tokens, where assets are not just stored but generated on demand by AI.</p>
+
+        <h2>3. Bridging Web3 and Web2</h2>
         
-        <section>
-            <h2>3. Bridging Web3 and Web2</h2>
-            
-            <h3>3.1 The Limitation of Contract Events</h3>
-            <p>Solidity's event system was designed for logging—a passive record of what happened. Events are not designed for action. To respond to an event, external systems must run indexers that continuously poll the chain, maintain infrastructure to detect and parse events, handle reorgs and missed blocks, and bear the cost of always-on monitoring.</p>
-            <p>This architecture forces Web2 systems to adapt to blockchain limitations rather than the other way around.</p>
-            
-            <h3>3.2 HOST: Intent, Execution, Result</h3>
-            <p>HOST inverts this relationship. Instead of logging what happened and hoping someone notices, HOST expresses deliberate intent:</p>
-            
-            <table class="comparison-table">
+        <h3>3.1 The Limitation of Contract Events</h3>
+        <p>Solidity's event system was designed for logging—a passive record of what happened. Events are not designed for action. To respond to an event, external systems must run indexers that continuously poll the chain, maintain infrastructure to detect and parse events, handle reorgs and missed blocks, and bear the cost of always-on monitoring.</p>
+        <p>This architecture forces Web2 systems to adapt to blockchain limitations rather than the other way around.</p>
+        
+        <h3>3.2 HOST: Intent, Execution, Result</h3>
+        <p>HOST inverts this relationship. Instead of logging what happened and hoping someone notices, HOST expresses deliberate intent:</p>
+        
+        <table>
+            <thead>
                 <tr>
                     <th>Events</th>
                     <th>HOST</th>
                 </tr>
+            </thead>
+            <tbody>
                 <tr>
                     <td>Passive logging</td>
                     <td>Active invocation</td>
@@ -357,278 +222,145 @@
                     <td>External systems adapt to blockchain</td>
                     <td>Blockchain integrates with external systems</td>
                 </tr>
-            </table>
-            
-            <div class="highlight">
-                <p>A contract event says: <em>"A ticket was minted."</em><br><br>A HOST trigger says: <em>"Generate this user's Apple Wallet pass and email it to them."</em></p>
+            </tbody>
+        </table>
+        
+        <div class="highlight">
+            <p>A contract event says: <em>"A ticket was minted."</em><br><br>A HOST trigger says: <em>"Generate this user's Apple Wallet pass and email it to them."</em></p>
+        </div>
+        
+        <h3>3.3 Your Webhooks Already Exist</h3>
+        <p>Most businesses already have webhook infrastructure—payment processors call them, CRMs trigger them, automation platforms chain them together. Stripe, Shopify, Twilio, SendGrid, Slack, Discord, n8n, Zapier—the entire Web2 ecosystem speaks webhooks.</p>
+        <p>HOST lets smart contracts speak the same language. No new infrastructure. No blockchain expertise required on the receiving end. Your existing webhook endpoint receives a POST request and acts on it, unaware that a blockchain triggered it.</p>
+        <p>This is the bridge: Web3 intent, Web2 execution.</p>
+
+        <h2>4. Architectural Overview</h2>
+        <p>HOST functions as a minimal routing layer within the Vitruveo EVM. The protocol deliberately handles only request routing—all business logic is delegated to validators and their subscribers.</p>
+        
+        <h3>4.1 The HostRequests Contract</h3>
+        <p>The protocol introduces a single contract that any smart contract can call. A request includes four parameters: the validator address that should execute the request, the target URL, the request payload (typically JSON), and HTTP headers.</p>
+        <p>The contract returns a unique request ID and emits an event containing the request details.</p>
+        
+        <h3>4.2 Precompile Behavior</h3>
+        <p>During block processing, each validator node monitors for HOST request events. The logic is simple: if the request is addressed to this validator, execute the HTTP POST request to the specified URL with the provided payload and headers. Each request includes a unique identifier header for idempotency handling.</p>
+        <p>This design means validators only process requests explicitly addressed to them.</p>
+        
+        <h3>4.3 Decentralized Validator Model</h3>
+        <p>HOST introduces no central authority for managing authorized requests. Instead:</p>
+        <p>Any validator can choose to service HOST requests. Validators independently manage their own subscriber relationships. Callers choose which validator(s) to use based on trust, price, or reliability. Payment terms, access control, and rate limiting are handled off-chain between validators and their subscribers.</p>
+        <p>This creates a competitive marketplace where validators differentiate on service quality and terms.</p>
+
+        <h2>5. Redundancy Through Multiple Validators</h2>
+        <p>Callers requiring high reliability can address multiple validators in a single transaction. All online validators will execute the request. The receiving endpoint handles this redundancy by checking the unique request ID header, processing the first arrival and safely ignoring duplicates.</p>
+        <p>This idempotency pattern is standard in webhook architectures and requires no special blockchain knowledge to implement.</p>
+
+        <h2>6. Security Guidance: The Secure Proxy Pattern</h2>
+        <p>HOST allows contracts to send arbitrary headers and bodies. However, because all on-chain data is public, developers are guided to use the Secure Proxy Pattern.</p>
+        <p><strong>Guidance:</strong> Do not store sensitive secrets (like API keys) in the smart contract payload.</p>
+        <p><strong>Implementation:</strong> The target URL should point to a developer-controlled proxy server. The on-chain payload contains only public context—what action to perform and relevant identifiers. The proxy server authenticates the incoming request, injects private API keys securely off-chain, and forwards the request to the final service.</p>
+
+        <h2>7. Scenario: Event Ticketing</h2>
+        <p>Consider a ticketing platform migrating to Vitruveo. Users purchase tickets as NFTs, but the platform wants the Web3 transaction to trigger their existing fulfillment pipeline.</p>
+        
+        <div class="scenario">
+            <div class="scenario-title">The Flow</div>
+            <ol>
+                <li>User purchases a ticket on the ticketing contract, paying in VTRU</li>
+                <li>Contract mints the NFT and calls HOST with the user's details</li>
+                <li>Validator executes HTTP POST to the platform's existing webhook</li>
+                <li>Platform's backend receives the request and generates an Apple Wallet or Google Wallet pass, emails it to the user, updates the CRM, and logs the sale in analytics</li>
+            </ol>
+            <p style="margin-top: 1rem; font-style: italic; color: #666;">The user mints a ticket and receives their mobile wallet pass in seconds. The ticketing platform's backend required zero blockchain integration—it simply received a webhook like it does from any other service.</p>
+        </div>
+        
+        <p>This is HOST: Web3 transaction, Web2 fulfillment, seamless bridge.</p>
+
+        <h2>8. The Rise of Agentic Workflows</h2>
+        <h3>8.1 What is an Agentic Workflow?</h3>
+        <p>Most users interact with AI via a simple chat interface: ask a question, get an answer. An Agentic Workflow is different. It is a multi-step, autonomous process where an AI "Agent" is given a goal and the tools to achieve it.</p>
+        <p><strong>Reasoning Loops:</strong> Instead of just answering, the agent thinks: "To answer this, I first need to search Google, then read this PDF, then compare the data."</p>
+        <p><strong>Tool Use:</strong> Agents can browse the live web, access databases, send emails, or deploy code.</p>
+        
+        <h3>8.2 Automation Platforms</h3>
+        <p>Platforms like n8n, Zapier, and LangChain have democratized these workflows. Developers can visually build complex chains of logic.</p>
+        <p><strong>Example Workflow:</strong> Receive Vitruveo Webhook → Parse JSON → Ask GPT-4 to summarize → Send Summary to Slack → Add Row to Google Sheets.</p>
+        <p><strong>HOST's Role:</strong> HOST acts as the "Start Button" for these powerful pipelines. A single transaction on Vitruveo can trigger a workflow that orchestrates dozens of off-chain tools.</p>
+
+        <h2>9. AI Independence: The "Model Agnostic" Architecture</h2>
+        <p>One of HOST's most significant advantages is its complete neutrality regarding AI models.</p>
+        <h3>9.1 No Vendor Lock-In</h3>
+        <p>Unlike "Oracle" solutions that might force developers to use a specific, curtailed version of an AI model, HOST is simply a secure transport layer.</p>
+        <p><strong>Bring Your Own Model:</strong> You can point your HOST trigger at OpenAI, Anthropic (Claude), Google Gemini, or a locally hosted Llama model.</p>
+        <p><strong>Future Proof:</strong> When a better model is released next month, you do not need to upgrade your smart contracts. You simply update your off-chain proxy or workflow to point to the new model.</p>
+
+        <h2>10. Use Case Encyclopedia</h2>
+        
+        <div class="use-cases">
+            <div class="use-case-category">
+                <h4>Category A: Autonomous Finance (DeFi)</h4>
+                <ul>
+                    <li><strong>Algorithmic Trading:</strong> A contract detects a price anomaly and triggers an off-chain bot to execute arbitrage.</li>
+                    <li><strong>Risk & Liquidation Engines:</strong> A lending protocol detects a health-factor drop and triggers a priority webhook to a liquidation engine.</li>
+                </ul>
             </div>
             
-            <h3>3.3 Your Webhooks Already Exist</h3>
-            <p>Most businesses already have webhook infrastructure—payment processors call them, CRMs trigger them, automation platforms chain them together. Stripe, Shopify, Twilio, SendGrid, Slack, Discord, n8n, Zapier—the entire Web2 ecosystem speaks webhooks.</p>
-            <p>HOST lets smart contracts speak the same language. No new infrastructure. No blockchain expertise required on the receiving end. Your existing webhook endpoint receives a POST request and acts on it, unaware that a blockchain triggered it.</p>
-            <p>This is the bridge: Web3 intent, Web2 execution.</p>
-        </section>
-        
-        <section>
-            <h2>4. Architectural Overview</h2>
-            <p>HOST functions as a minimal routing layer within the Vitruveo EVM. The protocol deliberately handles only request routing—all business logic is delegated to validators and their subscribers.</p>
-            
-            <h3>4.1 The HostRequests Contract</h3>
-            <p>The protocol introduces a single contract that any smart contract can call. A request includes four parameters: the validator address that should execute the request, the target URL, the request payload (typically JSON), and HTTP headers.</p>
-            <p>The contract returns a unique request ID and emits an event containing the request details.</p>
-            
-            <h3>4.2 Precompile Behavior</h3>
-            <p>During block processing, each validator node monitors for HOST request events. The logic is simple: if the request is addressed to this validator, execute the HTTP POST request to the specified URL with the provided payload and headers. Each request includes a unique identifier header for idempotency handling.</p>
-            <p>This design means validators only process requests explicitly addressed to them.</p>
-            
-            <h3>4.3 Decentralized Validator Model</h3>
-            <p>HOST introduces no central authority for managing authorized requests. Instead:</p>
-            <p>Any validator can choose to service HOST requests. Validators independently manage their own subscriber relationships. Callers choose which validator(s) to use based on trust, price, or reliability. Payment terms, access control, and rate limiting are handled off-chain between validators and their subscribers.</p>
-            <p>This creates a competitive marketplace where validators differentiate on service quality and terms.</p>
-        </section>
-        
-        <section>
-            <h2>5. Redundancy Through Multiple Validators</h2>
-            <p>Callers requiring high reliability can address multiple validators in a single transaction. All online validators will execute the request. The receiving endpoint handles this redundancy by checking the unique request ID header, processing the first arrival and safely ignoring duplicates.</p>
-            <p>This idempotency pattern is standard in webhook architectures and requires no special blockchain knowledge to implement.</p>
-        </section>
-        
-        <section>
-            <h2>6. Security Guidance: The Secure Proxy Pattern</h2>
-            <p>HOST allows contracts to send arbitrary headers and bodies. However, because all on-chain data is public, developers are guided to use the Secure Proxy Pattern.</p>
-            <p><strong>Guidance:</strong> Do not store sensitive secrets (like API keys) in the smart contract payload.</p>
-            <p><strong>Implementation:</strong> The target URL should point to a developer-controlled proxy server. The on-chain payload contains only public context—what action to perform and relevant identifiers. The proxy server authenticates the incoming request, injects private API keys securely off-chain, and forwards the request to the final service.</p>
-        </section>
-        
-        <section>
-            <h2>7. Scenario: Event Ticketing</h2>
-            <p>Consider a ticketing platform migrating to Vitruveo. Users purchase tickets as NFTs, but the platform wants the Web3 transaction to trigger their existing fulfillment pipeline.</p>
-            
-            <div class="scenario">
-                <div class="scenario-title">The Flow</div>
-                <ol class="scenario-steps">
-                    <li>User purchases a ticket on the ticketing contract, paying in VTRU</li>
-                    <li>Contract mints the NFT and calls HOST with the user's details</li>
-                    <li>Validator executes HTTP POST to the platform's existing webhook</li>
-                    <li>Platform's backend receives the request and generates an Apple Wallet or Google Wallet pass, emails it to the user, updates the CRM, and logs the sale in analytics</li>
-                </ol>
-                <p class="result">The user mints a ticket and receives their mobile wallet pass in seconds. The ticketing platform's backend required zero blockchain integration—it simply received a webhook like it does from any other service.</p>
+            <div class="use-case-category">
+                <h4>Category B: Real World Assets (RWA) & IoT</h4>
+                <ul>
+                    <li><strong>Smart Locks & Rentals:</strong> A tenant pays rent in USDC on Vitruveo; HOST triggers the IoT API to unlock the door for the next 30 days.</li>
+                    <li><strong>Supply Chain Activation:</strong> A payment is released in escrow; HOST triggers a logistics API to generate a shipping label.</li>
+                </ul>
             </div>
             
-            <p>This is HOST: Web3 transaction, Web2 fulfillment, seamless bridge.</p>
-        </section>
-        
-        <section>
-            <h2>8. The Rise of Agentic Workflows</h2>
-            
-            <h3>8.1 What is an Agentic Workflow?</h3>
-            <p>Most users interact with AI via a simple chat interface: ask a question, get an answer. An Agentic Workflow is different. It is a multi-step, autonomous process where an AI "Agent" is given a goal and the tools to achieve it.</p>
-            <p><strong>Reasoning Loops:</strong> Instead of just answering, the agent thinks: "To answer this, I first need to search Google, then read this PDF, then compare the data."</p>
-            <p><strong>Tool Use:</strong> Agents can browse the live web, access databases, send emails, or deploy code.</p>
-            
-            <h3>8.2 Automation Platforms</h3>
-            <p>Platforms like n8n, Zapier, and LangChain have democratized these workflows. Developers can visually build complex chains of logic.</p>
-            <p><strong>Example Workflow:</strong> Receive Vitruveo Webhook → Parse JSON → Ask GPT-4 to summarize → Send Summary to Slack → Add Row to Google Sheets.</p>
-            <p><strong>HOST's Role:</strong> HOST acts as the "Start Button" for these powerful pipelines. A single transaction on Vitruveo can trigger a workflow that orchestrates dozens of off-chain tools.</p>
-        </section>
-        
-        <section>
-            <h2>9. AI Independence: The "Model Agnostic" Architecture</h2>
-            <p>One of HOST's most significant advantages is its complete neutrality regarding AI models.</p>
-            
-            <h3>9.1 No Vendor Lock-In</h3>
-            <p>Unlike "Oracle" solutions that might force developers to use a specific, curtailed version of an AI model, HOST is simply a secure transport layer.</p>
-            <p><strong>Bring Your Own Model:</strong> You can point your HOST trigger at OpenAI, Anthropic (Claude), Google Gemini, or a locally hosted Llama model.</p>
-            <p><strong>Future Proof:</strong> When a better model is released next month, you do not need to upgrade your smart contracts. You simply update your off-chain proxy or workflow to point to the new model.</p>
-        </section>
-        
-        <section>
-            <h2>10. Use Case Encyclopedia</h2>
-            
-            <div class="use-cases">
-                <div class="use-case-category">
-                    <h4>Category A: Autonomous Finance (DeFi)</h4>
-                    <ul class="use-case-list">
-                        <li><strong>Algorithmic Trading:</strong> A contract detects a price anomaly and triggers an off-chain bot to execute arbitrage.</li>
-                        <li><strong>Risk & Liquidation Engines:</strong> A lending protocol detects a health-factor drop and triggers a priority webhook to a liquidation engine.</li>
-                        <li><strong>Portfolio Rebalancing:</strong> A vault contract detects drift from target allocation and triggers rebalancing logic.</li>
-                        <li><strong>Yield Optimization:</strong> Staking rewards are claimed and HOST triggers analysis of best reinvestment options.</li>
-                        <li><strong>Invoice Factoring:</strong> An invoice NFT is tokenized; HOST triggers credit scoring and instant liquidity offers.</li>
-                        <li><strong>Insurance Payouts:</strong> Oracle confirms flight delay; HOST triggers automatic payout processing and notification.</li>
-                    </ul>
-                </div>
-                
-                <div class="use-case-category">
-                    <h4>Category B: Real World Assets (RWA) & IoT</h4>
-                    <ul class="use-case-list">
-                        <li><strong>Smart Locks & Rentals:</strong> A tenant pays rent in USDC on Vitruveo; HOST triggers the IoT API to unlock the door for the next 30 days.</li>
-                        <li><strong>Supply Chain Activation:</strong> A payment is released in escrow; HOST triggers a logistics API to generate a shipping label.</li>
-                        <li><strong>Vehicle Access:</strong> Car rental payment confirms; HOST triggers the vehicle API to enable keyless entry for the rental period.</li>
-                        <li><strong>Utility Metering:</strong> Smart meter payment received; HOST triggers utility provider to maintain service.</li>
-                        <li><strong>Equipment Licensing:</strong> License fee paid on-chain; HOST triggers industrial equipment to unlock premium features.</li>
-                        <li><strong>Agricultural Automation:</strong> Crop sale finalizes; HOST triggers irrigation or harvesting equipment scheduling.</li>
-                    </ul>
-                </div>
-                
-                <div class="use-case-category">
-                    <h4>Category C: Commerce & Fulfillment</h4>
-                    <ul class="use-case-list">
-                        <li><strong>Physical Art Shipping:</strong> Artwork NFT is purchased; HOST triggers shipping request to artist with buyer's delivery details.</li>
-                        <li><strong>Print-on-Demand:</strong> Art license purchased; HOST triggers print fulfillment API with artwork files and shipping address.</li>
-                        <li><strong>Bill Payment Fulfillment:</strong> Invoice paid on-chain; HOST triggers warehouse to ship held goods.</li>
-                        <li><strong>Subscription Boxes:</strong> Monthly token burn triggers fulfillment center to ship next subscription box.</li>
-                        <li><strong>Custom Merchandise:</strong> Fan purchases artist merch NFT; HOST triggers production and fulfillment pipeline.</li>
-                        <li><strong>Digital Delivery:</strong> Ebook or course purchased; HOST triggers delivery platform to grant access and send download links.</li>
-                    </ul>
-                </div>
-                
-                <div class="use-case-category">
-                    <h4>Category D: Ticketing & Access</h4>
-                    <ul class="use-case-list">
-                        <li><strong>Mobile Wallet Passes:</strong> NFT ticket minted; HOST triggers Apple Wallet / Google Wallet pass generation and delivery.</li>
-                        <li><strong>Event Check-in:</strong> Ticket NFT transferred to venue wallet; HOST triggers attendance logging and loyalty point award.</li>
-                        <li><strong>VIP Upgrades:</strong> Holder stakes additional tokens; HOST triggers upgrade of their pass to VIP status.</li>
-                        <li><strong>Season Pass Renewal:</strong> Annual NFT burn-and-mint triggers new pass generation with updated QR codes.</li>
-                        <li><strong>Venue Access:</strong> Concert ticket scanned; HOST triggers backstage door unlock for VIP holders.</li>
-                        <li><strong>Travel Booking:</strong> Flight NFT purchased; HOST triggers airline API to issue actual boarding pass.</li>
-                    </ul>
-                </div>
-                
-                <div class="use-case-category">
-                    <h4>Category E: Generative AI & Dynamic Content</h4>
-                    <ul class="use-case-list">
-                        <li><strong>Dynamic NFT Minting:</strong> A user mints a "Mystery Box"; HOST triggers an Image Gen Agent to create unique artwork based on the user's wallet history.</li>
-                        <li><strong>Music Licensing:</strong> A purchase of a music NFT triggers a workflow to generate a custom license PDF and email it to the buyer.</li>
-                        <li><strong>NPC Logic:</strong> In on-chain games, player actions trigger LLM queries that generate unique, context-aware dialogue.</li>
-                        <li><strong>Personalized Art:</strong> Collector mints generative piece; HOST triggers AI to incorporate their ENS name or wallet traits into the artwork.</li>
-                        <li><strong>Audio Generation:</strong> Podcast NFT purchased; HOST triggers text-to-speech to generate personalized intro with buyer's name.</li>
-                        <li><strong>Story Evolution:</strong> Choice made in narrative NFT game; HOST triggers LLM to generate next story chapter.</li>
-                        <li><strong>Avatar Generation:</strong> Profile NFT minted; HOST triggers AI avatar creation based on on-chain identity.</li>
-                    </ul>
-                </div>
-                
-                <div class="use-case-category">
-                    <h4>Category F: Notifications & Communications</h4>
-                    <ul class="use-case-list">
-                        <li><strong>Transaction Alerts:</strong> High-value transfer detected; HOST triggers SMS/email/push notification to wallet owner.</li>
-                        <li><strong>Bid Notifications:</strong> New bid placed on NFT; HOST triggers notification to current owner.</li>
-                        <li><strong>Expiration Warnings:</strong> Option or subscription nearing expiry; HOST triggers reminder to holder.</li>
-                        <li><strong>Governance Alerts:</strong> New proposal created; HOST triggers notification to all token holders via Telegram/Discord bot.</li>
-                        <li><strong>Whale Watching:</strong> Large token movement detected; HOST triggers alert to subscribed analysts.</li>
-                        <li><strong>Price Alerts:</strong> Token hits user-defined threshold; HOST triggers personalized notification.</li>
-                    </ul>
-                </div>
-                
-                <div class="use-case-category">
-                    <h4>Category G: Identity & Credentials</h4>
-                    <ul class="use-case-list">
-                        <li><strong>KYC Verification:</strong> User stakes identity token; HOST triggers verification service and credential issuance.</li>
-                        <li><strong>Certificate Issuance:</strong> Course completion NFT minted; HOST triggers PDF certificate generation and LinkedIn credential update.</li>
-                        <li><strong>Badge Awards:</strong> Achievement unlocked on-chain; HOST triggers badge image generation and social share card creation.</li>
-                        <li><strong>Professional Licensing:</strong> Continuing education credits logged; HOST triggers licensing board API to update records.</li>
-                        <li><strong>Background Checks:</strong> Employment contract initiated; HOST triggers background verification service.</li>
-                    </ul>
-                </div>
-                
-                <div class="use-case-category">
-                    <h4>Category H: Gaming & Entertainment</h4>
-                    <ul class="use-case-list">
-                        <li><strong>Loot Drops:</strong> Boss defeated on-chain; HOST triggers loot generation algorithm and NFT minting queue.</li>
-                        <li><strong>Tournament Brackets:</strong> Match result recorded; HOST triggers bracket update and next match scheduling.</li>
-                        <li><strong>Leaderboard Updates:</strong> High score achieved; HOST triggers leaderboard service and social media announcement.</li>
-                        <li><strong>Streaming Rewards:</strong> Viewer tips artist; HOST triggers on-screen alert and loyalty point award.</li>
-                        <li><strong>Virtual World Events:</strong> Land purchase finalizes; HOST triggers welcome package delivery and neighbor notifications.</li>
-                        <li><strong>Betting Settlement:</strong> Game ends; HOST triggers payout calculations and winner notifications.</li>
-                    </ul>
-                </div>
-                
-                <div class="use-case-category">
-                    <h4>Category I: Legal & Compliance</h4>
-                    <ul class="use-case-list">
-                        <li><strong>Contract Execution:</strong> Multi-sig approval complete; HOST triggers DocuSign API to finalize legal documents.</li>
-                        <li><strong>Royalty Distribution:</strong> Secondary sale occurs; HOST triggers accounting system to log payment and generate receipt.</li>
-                        <li><strong>Audit Logging:</strong> Sensitive contract function called; HOST triggers immutable audit log entry in compliance system.</li>
-                        <li><strong>Regulatory Reporting:</strong> Threshold transaction detected; HOST triggers report generation for compliance team.</li>
-                        <li><strong>Dispute Initiation:</strong> Escrow dispute filed; HOST triggers arbitration platform to open case.</li>
-                    </ul>
-                </div>
-                
-                <div class="use-case-category">
-                    <h4>Category J: Social & Creator Economy</h4>
-                    <ul class="use-case-list">
-                        <li><strong>Fan Engagement:</strong> Artist drops new work; HOST triggers notification to all collector wallets.</li>
-                        <li><strong>Collaboration Invites:</strong> Royalty split contract created; HOST triggers email invites to collaborators.</li>
-                        <li><strong>Patronage Rewards:</strong> Monthly patron payment processes; HOST triggers exclusive content unlock and thank-you message.</li>
-                        <li><strong>Social Verification:</strong> NFT holder verifies on-chain; HOST triggers Twitter/Discord role update.</li>
-                        <li><strong>Milestone Celebrations:</strong> Artist hits 100 sales; HOST triggers commemorative NFT airdrop and press release draft.</li>
-                    </ul>
-                </div>
-                
-                <div class="use-case-category">
-                    <h4>Category K: Infrastructure & DevOps</h4>
-                    <ul class="use-case-list">
-                        <li><strong>Critical Alerting:</strong> Contract pause or hack detection triggers PagerDuty alerts immediately.</li>
-                        <li><strong>Automated Deployment:</strong> DAO governance vote passes; HOST triggers GitHub Action to merge code or deploy new frontend.</li>
-                        <li><strong>Monitoring:</strong> Contract health check fails; HOST triggers incident creation in ops platform.</li>
-                        <li><strong>Backup Triggers:</strong> Daily checkpoint reached; HOST triggers off-chain backup of contract state.</li>
-                        <li><strong>CI/CD Integration:</strong> Upgrade proposal approved; HOST triggers deployment pipeline with new bytecode.</li>
-                    </ul>
-                </div>
-                
-                <div class="use-case-category">
-                    <h4>Category L: Healthcare & Wellness</h4>
-                    <ul class="use-case-list">
-                        <li><strong>Prescription Fulfillment:</strong> Healthcare payment confirmed; HOST triggers pharmacy API to prepare prescription.</li>
-                        <li><strong>Appointment Booking:</strong> Consultation fee paid; HOST triggers calendar API to confirm appointment slot.</li>
-                        <li><strong>Fitness Rewards:</strong> Step goal achieved (oracle verified); HOST triggers reward distribution and achievement badge.</li>
-                        <li><strong>Medical Records:</strong> Consent token granted; HOST triggers secure record transfer between providers.</li>
-                        <li><strong>Wellness Challenges:</strong> Challenge completion verified; HOST triggers prize pool distribution.</li>
-                    </ul>
-                </div>
-                
-                <div class="use-case-category">
-                    <h4>Category M: Education & Research</h4>
-                    <ul class="use-case-list">
-                        <li><strong>Course Enrollment:</strong> Tuition payment received; HOST triggers LMS to grant course access.</li>
-                        <li><strong>Research Funding:</strong> Grant milestone approved; HOST triggers fund release and progress report request.</li>
-                        <li><strong>Peer Review:</strong> Paper submission staked; HOST triggers reviewer matching and assignment.</li>
-                        <li><strong>Credential Verification:</strong> Employer queries credential; HOST triggers verification response with proof.</li>
-                        <li><strong>Study Participation:</strong> Consent NFT minted; HOST triggers research platform to enroll participant.</li>
-                    </ul>
-                </div>
+            <div class="use-case-category">
+                <h4>Category C: Commerce & Fulfillment</h4>
+                <ul>
+                    <li><strong>Physical Art Shipping:</strong> Artwork NFT is purchased; HOST triggers shipping request to artist with buyer's delivery details.</li>
+                    <li><strong>Print-on-Demand:</strong> Art license purchased; HOST triggers print fulfillment API with artwork files and shipping address.</li>
+                </ul>
             </div>
-        </section>
-        
-        <section>
-            <h2>11. Protocol Design Rationale</h2>
-            
-            <h3>11.1 Minimal Protocol Surface</h3>
-            <p>The protocol deliberately avoids payment handling, access control lists, validator registration, and subscription management. This keeps the core protocol simple and upgradeable while allowing validators to compete on service terms.</p>
-            
-            <h3>11.2 Gas as Spam Prevention</h3>
-            <p>The only protocol-level spam prevention is gas cost. This is sufficient because validators only process requests addressed to them, malicious requests cost the attacker rather than the validator, and validators can implement additional filtering off-chain.</p>
-            
-            <h3>11.3 Market-Driven Quality</h3>
-            <p>The decentralized model creates natural incentives. Validators compete on price, reliability, and uptime. Poor performers lose subscribers and revenue. Callers choose their trust model freely. No governance bottleneck exists for onboarding new validators.</p>
-        </section>
-        
-        <section>
-            <h2>12. Conclusion</h2>
-            <p>HOST represents the evolution of the "Active Blockchain." By combining the high-speed, low-cost infrastructure of Vitruveo L1 with a protocol-level trigger mechanism, we eliminate the reliance on fragile polling infrastructure.</p>
-            <p>The decentralized validator model ensures no single point of control while creating a competitive marketplace for trigger services. Developers can build systems where Smart Contracts are active commanders of off-chain intelligence—whether that's AI agents, automation workflows, IoT devices, or enterprise systems.</p>
-            <p>Most importantly, HOST speaks the language Web2 already understands: webhooks. No new infrastructure required. Your existing systems receive a POST request and act on it. The blockchain becomes invisible—just another service in your stack that happens to be trustless, permissionless, and unstoppable.</p>
-            
-            <div class="highlight">
-                <p><strong>HOST makes Vitruveo the first truly active blockchain.</strong></p>
+
+            <div class="use-case-category">
+                <h4>Category D: Gaming & Entertainment</h4>
+                <ul>
+                    <li><strong>Loot Drops:</strong> Boss defeated on-chain; HOST triggers loot generation algorithm and NFT minting queue.</li>
+                    <li><strong>Leaderboard Updates:</strong> High score achieved; HOST triggers leaderboard service and social media announcement.</li>
+                </ul>
             </div>
-        </section>
+            
+            <div class="use-case-category">
+                <h4>Category E: Generative AI & Dynamic Content</h4>
+                <ul>
+                    <li><strong>Dynamic NFT Minting:</strong> A user mints a "Mystery Box"; HOST triggers an Image Gen Agent to create unique artwork based on the user's wallet history.</li>
+                    <li><strong>NPC Logic:</strong> In on-chain games, player actions trigger LLM queries that generate unique, context-aware dialogue.</li>
+                </ul>
+            </div>
+        </div>
+
+        <h2>11. Protocol Design Rationale</h2>
+        <h3>11.1 Minimal Protocol Surface</h3>
+        <p>The protocol deliberately avoids payment handling, access control lists, validator registration, and subscription management. This keeps the core protocol simple and upgradeable while allowing validators to compete on service terms.</p>
         
+        <h3>11.2 Gas as Spam Prevention</h3>
+        <p>The only protocol-level spam prevention is gas cost. This is sufficient because validators only process requests addressed to them, malicious requests cost the attacker rather than the validator, and validators can implement additional filtering off-chain.</p>
+        
+        <h3>11.3 Market-Driven Quality</h3>
+        <p>The decentralized model creates natural incentives. Validators compete on price, reliability, and uptime. Poor performers lose subscribers and revenue. Callers choose their trust model freely. No governance bottleneck exists for onboarding new validators.</p>
+
+        <h2>12. Conclusion</h2>
+        <p>HOST represents the evolution of the "Active Blockchain." By combining the high-speed, low-cost infrastructure of Vitruveo L1 with a protocol-level trigger mechanism, we eliminate the reliance on fragile polling infrastructure.</p>
+        <p>The decentralized validator model ensures no single point of control while creating a competitive marketplace for trigger services. Developers can build systems where Smart Contracts are active commanders of off-chain intelligence—whether that's AI agents, automation workflows, IoT devices, or enterprise systems.</p>
+        <p>Most importantly, HOST speaks the language Web2 already understands: webhooks. No new infrastructure required. Your existing systems receive a POST request and act on it. The blockchain becomes invisible—just another service in your stack that happens to be trustless, permissionless, and unstoppable.</p>
+        
+        <div class="highlight">
+            <p><strong>HOST makes Vitruveo the first truly active blockchain.</strong></p>
+        </div>
+
         <footer>
-            <p>© 2026 Nik Kalyani</p>
-            <div class="contact">
-                <a href="https://x.com/techbubble" target="_new">@techbubble</a>
-            </div>
+            Copyright © 2026 Nik Kalyani
         </footer>
+
     </div>
+
 </body>
 </html>
